@@ -1,17 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="../base.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title></title>
-  <link rel="stylesheet" href="../base.css">
-</head>
+  <body>
+    <style>
+      .instr {
+        color: black;
+      }
+      .turt {
+        /* position: relative; */
+        --x: 800px;
+        --y: 0px;
+        transform: translateX(var(--x)) translateY(var(--y));
+        transition: transform 0.2s;
+      }
+      .fly {
+        /* position: relative; */
+        --xx: 0px;
+        --yy: 0px;
+        transform: translateX(var(--xx)) translateY(var(--yy));
+        transition: transform 0.2s;
+      }
+    </style>
+    <div class="instr">
+      <h1>Mind your own business!</h1>
+      <h3>
+        Move the fly using a,d,w,x. Don't crash else you'll be turned into a
+        turtle!
+      </h3>
+      <h3>
+        Move the turtle using arrow keys. Don't crash else you'll be turned into
+        a fly!
+      </h3>
+      <hr>
+    </div>
+    <img width="200" src="./turtle.png" alt="Turtle" class="turt" />
+    <img width="150" src="./fly_PNG3946.png" alt="Fly" class="fly" />
 
+    <script>
+      const turtle = document.querySelector('.turt')
+      let turtleBox
+      const fly = document.querySelector('.fly')
+      let flyBox
+      const flyKeys = ['a', 'd', 'x', 'w']
+      let x = 800
+      let y = 0
+      let xx = 0
+      let yy = 0
 
-<body>
-  <img width="200" src="./turtle.png" alt="Turt" class="turt">
+      const isCollision = () => {
+        turtleBox = turtle.getBoundingClientRect()
+        flyBox = fly.getBoundingClientRect()
 
-</body>
+        return !(
+          flyBox.top > turtleBox.bottom ||
+          flyBox.right < turtleBox.left ||
+          flyBox.bottom < turtleBox.top ||
+          flyBox.left > turtleBox.right
+        )
+      }
 
+      const handleKeyDown = e => {
+        switch (e.key) {
+          case 'ArrowUp':
+            y = y >= 10 ? y - 10 : 0
+            break
+          case 'ArrowDown':
+            y += 10
+            break
+          case 'ArrowLeft':
+            x -= 10
+            break
+          case 'ArrowRight':
+            x += 10
+            break
+          case 'w':
+            yy = yy >= 10 ? yy - 10 : 0
+            break
+          case 'x':
+            yy += 10
+            break
+          case 'a':
+            xx -= 10
+            break
+          case 'd':
+            xx += 10
+            break
+
+          default:
+            return
+        }
+        turtle.setAttribute(
+          'style',
+          `
+          --x: ${x}px;
+          --y: ${y}px;
+          `
+        )
+        fly.setAttribute(
+          'style',
+          `
+          --xx: ${xx}px;
+          --yy: ${yy}px;
+          `
+        )
+        if (isCollision()) {
+          if (flyKeys.includes(e.key)) {
+            fly.src = turtle.src
+          } else {
+            turtle.src = fly.src
+          }
+          window.removeEventListener('keydown', handleKeyDown)
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown)
+    </script>
+  </body>
 </html>
